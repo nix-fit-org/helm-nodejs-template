@@ -1,0 +1,16 @@
+apiVersion: v2
+name: ""
+description: Nodejs chart template
+type: application
+version: 1.0.0
+appVersion: ""
+
+maintainers:
+  - email: wizardy.oni@gmail.com
+    name: Ivan Chizh
+    url: https://github.com/drone117
+
+dependencies:
+  - name: commonlib
+    repository: oci://nix-docker.registry.twcstorage.ru/helm/libs
+    version: 1.0.0

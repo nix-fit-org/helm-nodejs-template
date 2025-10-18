@@ -1,0 +1,86 @@
+---
+
+image:
+  # -- image registry
+  registry: nix-docker.registry.twcstorage.ru
+  # -- image repository
+  repository:
+  # -- image tag
+  tag:
+  # -- image digest
+  digest:
+  # -- image pull policy
+  pullPolicy: Always
+
+serviceAccount:
+  # -- service account name
+  name: default
+  # -- service account auto mount token
+  automountServiceAccountToken: false
+
+# -- replica count
+replicaCount: 2
+# -- progress deadline seconds
+progressDeadlineSeconds: 180
+# -- revision history limit
+revisionHistoryLimit: 1
+
+updateStrategy:
+  # -- update strategy type
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+service:
+  # -- service port (app)
+  port: 3000
+
+ingress:
+  # -- open access to nodejs outside cluster
+  enabled: false
+  # -- ingress class name
+  className: nginx
+  # -- ingress host
+  host: ""
+
+resources:
+  requests:
+    # -- cpu requests
+    cpu: 250m
+    # -- memory requests
+    memory: 256Mi
+  limits:
+    # -- cpu limits
+    cpu: 500m
+    # memory limits
+    memory: 768Mi
+
+probes:
+  liveness:
+    # -- liveness probe path
+    path: /health/live
+    # -- liveness probe initial delay
+    initialDelaySeconds: 60
+    # -- liveness probe period
+    periodSeconds: 5
+    # -- liveness probe timeout per attempt
+    timeoutSeconds: 1
+    # -- liveness probe max consecutive failures before restart
+    failureThreshold: 5
+  readiness:
+    # -- readiness probe path
+    path: /health/ready
+    # -- readiness probe inital delay
+    initialDelaySeconds: 60
+    # -- readiness probe period
+    periodSeconds: 5
+    # -- readiness probe timeout per attempt
+    timeoutSeconds: 1
+    # -- readiness probe max consecutive failures before unready
+    failureThreshold: 5
+
+app:
+  env:
+  secrets:
+    env:

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "commonlib.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    {{- .Values.updateStrategy | toYaml | nindent 4 }}
+  selector:
+    matchLabels:
+      {{- include "commonlib.selectorLabels" . | nindent 6 }}
+  progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  template:
+    metadata:
+      labels:
+        tier: frontend
+        framework: nodejs
+        {{- include "commonlib.labels" . | nindent 8 }}
+      annotations:
+        {{- include "commonlib.prometheus.annotations" . | nindent 8 }}
+    spec:
+      serviceAccount: {{ .Values.serviceAccount.name }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      affinity:
+        {{- include "commonlib.podAntiAffinity" . | nindent 8 }}
+      securityContext:
+        {{- include "commonlib.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: {{ include "commonlib.name" . }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http-{{ .Values.service.port }}
+              containerPort: {{ .Values.service.port }}
+          env:
+            {{- include "commonlib.envFromSecrets" . | nindent 12 }}
+            {{- include "commonlib.envFromValues" . | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            {{- include "commonlib.containerSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            {{- include "commonlib.volumeMounts" . | nindent 12 }}
+            - name: nodejs
+              mountPath: /opt/nodejs/data
+      volumes:
+        {{- include "commonlib.volumes" . | nindent 8 }}
+        - name: nodejs
+          emptyDir:
+            sizeLimit: 128Mi
