@@ -1,8 +1,8 @@
 apiVersion: v2
-name: ""
-description: Nodejs chart template
+name: "nodejs-app"
+description: Node.js app chart template
 type: application
-version: 1.0.0
+version: 1.1.0
 appVersion: ""
 
 maintainers:

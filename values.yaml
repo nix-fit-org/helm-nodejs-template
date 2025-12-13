@@ -36,6 +36,20 @@ service:
   # -- service port (app)
   port: 3000
 
+annotations:
+  deployment:
+    prometheus:
+      # -- prometheus scrape enabled
+      scrape: "true"
+      # -- prometheus metrics path
+      path: "/metrics"
+      # -- prometheus metrics port
+      port: "3000"
+  ingress:
+    certManager:
+      # -- cert manager cluster issuer
+      clusterIssuer: "letsencrypt-prod"
+
 ingress:
   # -- open access to nodejs outside cluster
   enabled: false
@@ -81,6 +95,8 @@ probes:
     failureThreshold: 5
 
 app:
+  # -- app environment variables
   env:
   secrets:
+    # -- app secret environment variables
     env:
