@@ -1,0 +1,28 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "commonlib.labels" . | nindent 4 }}
+  annotations:
+    {{- include "commonlib.ingress.annotations" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  tls:
+    - hosts:
+        - {{ required "ingress.host must be set when ingress.enabled=true" .Values.ingress.host }}
+      secretName: {{ .Release.Name }}-ingress-nginx-tls
+  rules:
+    - host: {{ required "ingress.host must be set when ingress.enabled=true" .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}
+                port:
+                  number: {{ .Values.service.port }}
+{{- end }}

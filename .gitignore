@@ -26,3 +26,4 @@ release-*.yaml
 dev.values.yaml
 dev.secrets.yaml
 .sops.yaml
+Chart.lock
