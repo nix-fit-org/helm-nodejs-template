@@ -1,0 +1,40 @@
+{{ template "chart.header" . }}
+
+{{ template "chart.badgesSection" . }}
+
+## Description
+
+{{ template "chart.description" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+## Values
+
+Example values.yaml
+
+```yaml
+---
+
+ingress:
+  enabled: true
+  host: nodejs-app.host
+
+app:
+  env:
+    ENV_1: VALUE_1
+    ENV_2: VALUE_2
+  secrets:
+    env:
+      SECRET_ENV_1: SECRET_VALUE_1
+      SECRET_ENV_2: SECRET_VALUE_2
+```
+
+## Contribute
+
+Don't forget to generate every time actual README.md:
+
+```bash
+helm-docs --template-files=README.md.gotmpl
+```
+
+{{ template "chart.valuesSection" . }}
