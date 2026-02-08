@@ -51,12 +51,14 @@ annotations:
       clusterIssuer: "letsencrypt-prod"
 
 ingress:
-  # -- open access to nodejs outside cluster
+  # -- open access to app outside cluster via ingress
   enabled: false
   # -- ingress class name
   className: nginx
   # -- ingress host
   host: ""
+  # -- ingress tls secret name (where to store signed certificate from Let's Encrypt)
+  tlsSecretName: ""
 
 gateway:
   # -- gateway enabled
@@ -66,6 +68,8 @@ gateway:
   # -- gateway object namespace
   namespace: envoy-gateway-system
   httpRoute:
+    # -- httproute gateway parentRef
+    httpSectionName: http-80
     # -- httproute hostname
     host: ""
     filters:
@@ -93,16 +97,20 @@ resources:
     cpu: 250m
     # -- memory requests
     memory: 256Mi
+    # -- ephemeral storage requests
+    ephemeral-storage: 128Mi
   limits:
     # -- cpu limits
     cpu: 500m
     # memory limits
     memory: 768Mi
+    # -- ephemeral storage limits
+    ephemeral-storage: 256Mi
 
 probes:
   liveness:
     # -- liveness probe path
-    path: /health/live
+    path: /
     # -- liveness probe initial delay
     initialDelaySeconds: 60
     # -- liveness probe period
@@ -113,7 +121,7 @@ probes:
     failureThreshold: 5
   readiness:
     # -- readiness probe path
-    path: /health/ready
+    path: /
     # -- readiness probe inital delay
     initialDelaySeconds: 60
     # -- readiness probe period
