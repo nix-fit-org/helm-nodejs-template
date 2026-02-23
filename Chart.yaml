@@ -1,16 +1,19 @@
 apiVersion: v2
-name: "nodejs-app"
+name: nodejs-app-template
 description: Node.js app chart template
 type: application
-version: 1.2.0
+version: 1.3.0
 appVersion: ""
 
 maintainers:
   - email: wizardy.oni@gmail.com
     name: Ivan Chizh
     url: https://github.com/drone117
+  - email: nex1gen@yandex.ru
+    name: Dmitrii Bogomolnyi
+    url: https://github.com/nex1gen
 
 dependencies:
   - name: commonlib
     repository: oci://nix-docker.registry.twcstorage.ru/helm/libs
-    version: 1.0.0
+    version: 1.1.0
